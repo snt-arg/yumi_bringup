@@ -1,0 +1,8 @@
+# goal
+string task
+string routine
+---
+#result
+int32 result_code
+string message
+---
