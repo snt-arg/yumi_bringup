@@ -16,23 +16,23 @@ void RWSWrapper::open()
 bool RWSWrapper::cb_execute_rapid_routine(abb_rapid_sm_addin_msgs::SetRAPIDRoutine::Request &req,
                             abb_rapid_sm_addin_msgs::SetRAPIDRoutine::Response &res) 
 {
-    if(execute_rapid_routine(req.task, req.routine))
+    if(execute_rapid_routine(req.routine))
         res.result_code = 1;
     
     return true;
 }
 
 
-bool RWSWrapper::execute_rapid_routine(std::string task, std::string routine)
+bool RWSWrapper::execute_rapid_routine(std::string routine)
 {
-    ROS_INFO("task is %s  and status is %d", task.c_str(), task_status[task]);
-    if (task_status[task])
+    //ROS_INFO("task is %s  and status is %d", task.c_str(), task_status[task]);
+    if (robtask.is_running)
         return false;
 
     abb_rapid_sm_addin_msgs::SetRAPIDRoutine set_srv;
     abb_robot_msgs::TriggerWithResultCode run_srv;
 
-    set_srv.request.task = task;
+    set_srv.request.task = robtask.name;
     set_srv.request.routine = routine;
 
 
@@ -43,7 +43,7 @@ bool RWSWrapper::execute_rapid_routine(std::string task, std::string routine)
         if (runner_client.call(run_srv) && run_srv.response.result_code == 1)
         {
             ROS_INFO("RAPID routine executed successfully");
-            task_status[task] = true;
+            robtask.is_running = true;
             return true;
         }
         
@@ -55,15 +55,14 @@ bool RWSWrapper::execute_rapid_routine(std::string task, std::string routine)
 
 void RWSWrapper::cb_rapid_exec_goal()
 {
-    auto goal = as_rapid_exec_.acceptNewGoal();
-    if(!execute_rapid_routine(goal->task, goal->routine))
+    if (!robtask.is_running)
     {
-        ROS_INFO("dadayehhhh");
-        //result_.result_code = 2;
-        //as_rapid_exec_.setAborted(result_);
+        auto goal = as_rapid_exec_.acceptNewGoal();
+        if(!execute_rapid_routine(goal->routine))
+        {
+            ROS_INFO("dadayehhhh");
+        }
     }
-
-    
 }
 
 void RWSWrapper::cb_rapid_exec_analysis(const abb_rapid_sm_addin_msgs::RuntimeState::ConstPtr& msg)
@@ -71,22 +70,16 @@ void RWSWrapper::cb_rapid_exec_analysis(const abb_rapid_sm_addin_msgs::RuntimeSt
     if (!as_rapid_exec_.isActive())
         return;
     
-    if(task_status["T_ROB_R"] && msg->state_machines[T_ROB_R].sm_state == 2)
+    if(msg->state_machines[robtask.topic_id].sm_state == 2)
     {
-        task_status["T_ROB_R"] = false;
-        result_.result_code = 1;
-        as_rapid_exec_.setSucceeded(result_);
-    }
-    if(task_status["T_ROB_L"] && msg->state_machines[T_ROB_L].sm_state == 2)
-    {
-        task_status["T_ROB_L"] = false;
+        robtask.is_running = false;
         result_.result_code = 1;
         as_rapid_exec_.setSucceeded(result_);
     }
 }
 
 RWSWrapper::RWSWrapper(RobTask task) :
-as_rapid_exec_(nh_,"dadayeh", false), task(task)
+as_rapid_exec_(nh_,"dadayeh", false), robtask(task)
 {
     
 }
