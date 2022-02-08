@@ -58,12 +58,3 @@ private:
 };
 
 
-RobTask::RobTask(std::string name):
-name(name)
-{
-    topic_id = task_id[name];
-}
-
-RobTask::~RobTask() {}
-
-RWSWrapper::~RWSWrapper() {}

@@ -129,6 +129,7 @@ include_directories(
 ## Declare a C++ library
  add_library(RWS_WRAPPER
    src/rws_wrapper.cpp
+   src/trajectory_executer.cpp
  )
 
 ## Add cmake target dependencies of the library
@@ -140,6 +141,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
  add_executable(yumi_bringup src/bringup.cpp)
+ add_executable(exec_traj src/exec_traj.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -155,6 +157,7 @@ include_directories(
  target_link_libraries(RWS_WRAPPER ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
  target_link_libraries(yumi_bringup ${catkin_LIBRARIES} ${Boost_LIBRARIES} RWS_WRAPPER)
+ target_link_libraries(exec_traj ${catkin_LIBRARIES} ${Boost_LIBRARIES} RWS_WRAPPER)
 
 #############
 ## Install ##

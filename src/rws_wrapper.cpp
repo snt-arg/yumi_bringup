@@ -25,10 +25,6 @@ bool RWSWrapper::cb_execute_rapid_routine(abb_rapid_sm_addin_msgs::SetRAPIDRouti
 
 bool RWSWrapper::execute_rapid_routine(std::string routine)
 {
-    //ROS_INFO("task is %s  and status is %d", task.c_str(), task_status[task]);
-    if (robtask.is_running)
-        return false;
-
     abb_rapid_sm_addin_msgs::SetRAPIDRoutine set_srv;
     abb_robot_msgs::TriggerWithResultCode run_srv;
 
@@ -43,7 +39,6 @@ bool RWSWrapper::execute_rapid_routine(std::string routine)
         if (runner_client.call(run_srv) && run_srv.response.result_code == 1)
         {
             ROS_INFO("RAPID routine executed successfully");
-            robtask.is_running = true;
             return true;
         }
         
@@ -58,10 +53,10 @@ void RWSWrapper::cb_rapid_exec_goal()
     if (!robtask.is_running)
     {
         auto goal = as_rapid_exec_.acceptNewGoal();
-        if(!execute_rapid_routine(goal->routine))
-        {
-            ROS_INFO("dadayehhhh");
-        }
+        if(execute_rapid_routine(goal->routine))
+            robtask.is_running = true;
+        else
+            ROS_INFO("ridi");
     }
 }
 
@@ -83,3 +78,13 @@ as_rapid_exec_(nh_,"dadayeh", false), robtask(task)
 {
     
 }
+
+RobTask::RobTask(std::string name):
+name(name)
+{
+    topic_id = task_id[name];
+}
+
+RobTask::~RobTask() {}
+
+RWSWrapper::~RWSWrapper() {}
