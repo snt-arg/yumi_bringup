@@ -3,8 +3,8 @@
 #include <abb_rapid_sm_addin_msgs/SetRAPIDRoutine.h>
 #include <abb_rapid_sm_addin_msgs/RuntimeState.h>
 #include <abb_robot_msgs/TriggerWithResultCode.h>
-
 #include <actionlib/server/simple_action_server.h>
+
 #include "yumi_bringup/ExecuteRapidRoutineAction.h"
 
 class RobTask

@@ -7,7 +7,7 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
 
     TrajectoryExecuter executer("dadayeh");
-    executer.temp_run();
+    //executer.temp_run();
 
     ros::spin();
     return 0;
