@@ -7,21 +7,7 @@
 
 #include "yumi_bringup/ExecuteRapidRoutineAction.h"
 
-class RobTask
-{
-public:
-    RobTask(std::string name);
-    ~RobTask();
-
-public:
-    std::string name;
-    int topic_id;
-    bool is_running = false;
-
-private:
-    std::map<std::string, int> task_id = {{"T_ROB_R" , 0},
-                                        {"T_ROB_L", 1}};
-};
+#include <yumi_bringup/utilities.h>
 
 class RWSWrapper
 {
@@ -36,11 +22,11 @@ protected:
 private:
     ros::ServiceServer service;
     ros::ServiceClient setter_client, runner_client;
-    RobTask robtask;
+    RWSConstants::RobTask robtask;
     
 
 public:
-    RWSWrapper(RobTask task);
+    RWSWrapper(RWSConstants::RobTask task);
     ~RWSWrapper();
     void open();
 

@@ -34,17 +34,4 @@ private:
 
     void cb_execute(const control_msgs::FollowJointTrajectoryGoalConstPtr &goal);
 
-    trajectory_msgs::JointTrajectory temp_create_trajectory();
-
-
-    std::map<std::string, int> joint_mapping_l = {
-        {"yumi_robl_joint_1", 0},
-        {"yumi_robl_joint_2", 1},
-        {"yumi_robl_joint_3", 2},
-        {"yumi_robl_joint_4", 3},
-        {"yumi_robl_joint_5", 4},
-        {"yumi_robl_joint_6", 5},
-        {"yumi_robl_joint_7", 6}
-    };
-
 };
