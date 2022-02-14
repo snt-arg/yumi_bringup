@@ -21,10 +21,9 @@ void TrajectoryExecuter::executeCBFollowJoint(const control_msgs::FollowJointTra
     std::string trajectory = translateTrajectory(goal->trajectory);
 
     if (setFileContent(robtask_.buffer_filename, trajectory) &&
-        runRoutine(RWSConstants::Routines::UPDATE_TRAJECTORY) &&
-        runRoutine(RWSConstants::Routines::MOVE_JOINT))
+        runRoutine(RWSConstants::Routines::EXECUTE_JOINT))
     {
-        //ROS_DEBUG_NAMED("RWS", "FollowJointTrajectory action executed successfully");
+        ROS_DEBUG_NAMED("RWS", "FollowJointTrajectory action executed successfully");
         result_followjoint_.error_code = result_followjoint_.SUCCESSFUL;
         as_followjoint_.setSucceeded(result_followjoint_);
     }

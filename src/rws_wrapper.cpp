@@ -25,7 +25,7 @@ bool RWSWrapper::executeRapid(std::string routine)
     {
         if (sc_run_rapid_.call(run_srv) && run_srv.response.result_code == RWSConstants::RC_SUCCESS)
         {
-            ROS_DEBUG_NAMED("RWS", "Rapid routine %s execution started", set_srv.request.routine.c_str());
+            ROS_DEBUG_NAMED("RWS", "Rapid routine %s execution from %s started", set_srv.request.routine.c_str(), robtask_.name.c_str());
             return true;
         }
         else
@@ -45,6 +45,7 @@ void RWSWrapper::goalCBExecuteRapid()
     if (!robtask_.is_running)
     {
         auto goal = as_exec_rapid_.acceptNewGoal();
+        ros::Duration(0.5).sleep();
         if(executeRapid(goal->routine))
             robtask_.is_running = true;
         else
@@ -64,6 +65,7 @@ void RWSWrapper::subCBRapidState(const abb_rapid_sm_addin_msgs::RuntimeState::Co
         robtask_.is_running = false;
         result_exec_rapid_.result_code = RWSConstants::RC_SUCCESS;
         as_exec_rapid_.setSucceeded(result_exec_rapid_);
+        ROS_DEBUG_NAMED("RWS", "task %s is now IDLE", robtask_.name.c_str());
     }
 }
 
@@ -71,7 +73,7 @@ RWSWrapper::RWSWrapper(RWSConstants::RobTask task) :
 as_exec_rapid_(nh_, task.as_execute_rapid, false),
 robtask_(task)
 {
-    ss_rapid_exec_ = nh_.advertiseService(RWSConstants::Services::EXECUTE_RAPID_NONBLOCKING, &RWSWrapper::serviceCBExecuteRapid, this);
+    //ss_rapid_exec_ = nh_.advertiseService(RWSConstants::Services::EXECUTE_RAPID_NONBLOCKING, &RWSWrapper::serviceCBExecuteRapid, this);
     sc_set_rapid_ = nh_.serviceClient<abb_rapid_sm_addin_msgs::SetRAPIDRoutine>(RWSConstants::Services::SET_RAPID_ROUTINE);
     sc_run_rapid_ = nh_.serviceClient<abb_robot_msgs::TriggerWithResultCode>(RWSConstants::Services::RUN_RAPID_ROUTINE);
 

@@ -88,7 +88,8 @@ namespace RWSConstants
     namespace Routines
     {
         const std::string UPDATE_TRAJECTORY = "update_traj",
-                            MOVE_JOINT = "movejoint";
+                            MOVE_JOINT = "movejoint",
+                            EXECUTE_JOINT = "executejoint";
 
     }
 
@@ -112,8 +113,8 @@ namespace RWSConstants
     {
         const std::string AS_EXECUTE_RAPID_L = "execute_rapid_l",
                             AS_EXECUTE_RAPID_R = "execute_rapid_r",
-                            AS_FOLLOWJOINT_L = "joint_controller_l",
-                            AS_FOLLOWJOINT_R = "joint_controller_r";
+                            AS_FOLLOWJOINT_L = "/yumi_l/joint_controller_l",
+                            AS_FOLLOWJOINT_R = "/yumi_r/joint_controller_r";
     }
 
     //Refernce Robot Task Instances for RAPID Execution
