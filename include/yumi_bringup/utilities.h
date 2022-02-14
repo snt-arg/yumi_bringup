@@ -9,8 +9,11 @@ namespace RWSConstants
 
     struct RobTask
     {
-        RobTask(std::string name, int topic_id):
-        name(name), topic_id(topic_id)
+        RobTask(std::string name, int topic_id, std::vector<std::string> joint_order,
+                std::string buffer_filename, std::string as_execute_rapid, std::string as_followjoint):
+        name(name), topic_id(topic_id),
+        joint_order(joint_order), buffer_filename(buffer_filename), 
+        as_execute_rapid(as_execute_rapid), as_followjoint(as_followjoint)
         {}
         ~RobTask()
         {}
@@ -21,10 +24,13 @@ namespace RWSConstants
         int topic_id;
         //whether our task state machine (sm) is currently running sth
         bool is_running = false;
-    };
 
-    //Refernce Robot Task Instances for RAPID Execution
-    const RobTask T_ROB_R("T_ROB_R", 0), T_ROB_L("T_ROB_L", 1);
+        std::vector<std::string> joint_order;
+
+        std::string buffer_filename;
+        std::string as_execute_rapid;
+        std::string as_followjoint;
+    };
 
     // order sequence of joints to write to ABB controller for joint trajectory execution
     const std::vector<std::string> jointTrj_outputOrderL = {"yumi_robl_joint_1","yumi_robl_joint_2","yumi_robl_joint_3",
@@ -106,6 +112,11 @@ namespace RWSConstants
     {
         const std::string AS_EXECUTE_RAPID_L = "execute_rapid_l",
                             AS_EXECUTE_RAPID_R = "execute_rapid_r",
-                            AS_FOLLOWJOINT_L = "joint_controller_l";
+                            AS_FOLLOWJOINT_L = "joint_controller_l",
+                            AS_FOLLOWJOINT_R = "joint_controller_r";
     }
+
+    //Refernce Robot Task Instances for RAPID Execution
+    const RobTask T_ROB_R("T_ROB_R", 0, jointTrj_outputOrderR, BUFFER_FILE_R, Actions::AS_EXECUTE_RAPID_R, Actions::AS_FOLLOWJOINT_R);
+    const RobTask T_ROB_L("T_ROB_L", 1, jointTrj_outputOrderL, BUFFER_FILE_L, Actions::AS_EXECUTE_RAPID_L, Actions::AS_FOLLOWJOINT_L);
 }

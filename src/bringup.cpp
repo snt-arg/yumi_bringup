@@ -7,7 +7,6 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
 
     RWSWrapper rwswrapper(RWSConstants::T_ROB_L);
-    rwswrapper.open();
 
     ros::spin();
     return 0;

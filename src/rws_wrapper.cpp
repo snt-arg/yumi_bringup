@@ -1,82 +1,85 @@
 #include "yumi_bringup/rws_wrapper.h"
 
-void RWSWrapper::open()
-{
-    service = nh_.advertiseService(RWSConstants::Services::EXECUTE_RAPID_NONBLOCKING, &RWSWrapper::cb_execute_rapid_routine, this);
-    setter_client = nh_.serviceClient<abb_rapid_sm_addin_msgs::SetRAPIDRoutine>(RWSConstants::Services::SET_RAPID_ROUTINE);
-    runner_client = nh_.serviceClient<abb_robot_msgs::TriggerWithResultCode>(RWSConstants::Services::RUN_RAPID_ROUTINE);
 
-    as_rapid_exec_.registerGoalCallback(boost::bind(&RWSWrapper::cb_rapid_exec_goal, this));
-    sub_rwsstate_ = nh_.subscribe(RWSConstants::Topics::SM_RUNTIME_STATES, 1,&RWSWrapper::cb_rapid_exec_analysis,this);
-
-    as_rapid_exec_.start();
-}
-
-
-bool RWSWrapper::cb_execute_rapid_routine(abb_rapid_sm_addin_msgs::SetRAPIDRoutine::Request &req,
+bool RWSWrapper::serviceCBExecuteRapid(abb_rapid_sm_addin_msgs::SetRAPIDRoutine::Request &req,
                             abb_rapid_sm_addin_msgs::SetRAPIDRoutine::Response &res) 
 {
-    if(execute_rapid_routine(req.routine))
+    if(executeRapid(req.routine))
         res.result_code = RWSConstants::RC_SUCCESS;
+    else
+        res.result_code = RWSConstants::RC_FAILED;
     
     return true;
 }
 
 
-bool RWSWrapper::execute_rapid_routine(std::string routine)
+bool RWSWrapper::executeRapid(std::string routine)
 {
     abb_rapid_sm_addin_msgs::SetRAPIDRoutine set_srv;
     abb_robot_msgs::TriggerWithResultCode run_srv;
 
-    set_srv.request.task = robtask.name;
+    set_srv.request.task = robtask_.name;
     set_srv.request.routine = routine;
 
-
-    //ROS_INFO(set_srv.request.task.c_str());
-    if(setter_client.call(set_srv) && set_srv.response.result_code == RWSConstants::RC_SUCCESS)
+    if(sc_set_rapid_.call(set_srv) && set_srv.response.result_code == RWSConstants::RC_SUCCESS)
     {
-        //ROS_INFO("set rapid routine response is %d", set_srv.response.result_code);
-        if (runner_client.call(run_srv) && run_srv.response.result_code == RWSConstants::RC_SUCCESS)
+        if (sc_run_rapid_.call(run_srv) && run_srv.response.result_code == RWSConstants::RC_SUCCESS)
         {
-            ROS_INFO("RAPID routine executed successfully");
+            ROS_DEBUG_NAMED("RWS", "Rapid routine %s execution started", set_srv.request.routine.c_str());
             return true;
         }
-        
+        else
+            ROS_DEBUG_NAMED("RWS", "Failed to run rapid routine %s, return code: %d, message: %s", 
+                            set_srv.request.routine.c_str(), run_srv.response.result_code, run_srv.response.message.c_str());  
     }
+    else
+        ROS_DEBUG_NAMED("RWS", "Failed to set rapid routine %s, return code: %d, message: %s",
+                             set_srv.request.routine.c_str(), set_srv.response.result_code, set_srv.response.message.c_str());
 
     return false;    
 
 }
 
-void RWSWrapper::cb_rapid_exec_goal()
+void RWSWrapper::goalCBExecuteRapid()
 {
-    if (!robtask.is_running)
+    if (!robtask_.is_running)
     {
-        auto goal = as_rapid_exec_.acceptNewGoal();
-        if(execute_rapid_routine(goal->routine))
-            robtask.is_running = true;
+        auto goal = as_exec_rapid_.acceptNewGoal();
+        if(executeRapid(goal->routine))
+            robtask_.is_running = true;
         else
-            ROS_INFO("ridi");
+            ROS_DEBUG_NAMED("RWS", "Failed to execute rapid action");
     }
+    else
+        ROS_DEBUG_NAMED("RWS", "Recieved a rapid execution request while another one is running, dropping request");
 }
 
-void RWSWrapper::cb_rapid_exec_analysis(const abb_rapid_sm_addin_msgs::RuntimeState::ConstPtr& msg)
+void RWSWrapper::subCBRapidState(const abb_rapid_sm_addin_msgs::RuntimeState::ConstPtr& msg)
 {
-    if (!as_rapid_exec_.isActive())
+    if (!as_exec_rapid_.isActive())
         return;
     
-    if(msg->state_machines[robtask.topic_id].sm_state == RWSConstants::SM_STATE_IDLE)
+    if(msg->state_machines[robtask_.topic_id].sm_state == RWSConstants::SM_STATE_IDLE)
     {
-        robtask.is_running = false;
-        result_.result_code = RWSConstants::RC_SUCCESS;
-        as_rapid_exec_.setSucceeded(result_);
+        robtask_.is_running = false;
+        result_exec_rapid_.result_code = RWSConstants::RC_SUCCESS;
+        as_exec_rapid_.setSucceeded(result_exec_rapid_);
     }
 }
 
 RWSWrapper::RWSWrapper(RWSConstants::RobTask task) :
-as_rapid_exec_(nh_,RWSConstants::Actions::AS_EXECUTE_RAPID_L, false), robtask(task)
+as_exec_rapid_(nh_, task.as_execute_rapid, false),
+robtask_(task)
 {
-    
+    ss_rapid_exec_ = nh_.advertiseService(RWSConstants::Services::EXECUTE_RAPID_NONBLOCKING, &RWSWrapper::serviceCBExecuteRapid, this);
+    sc_set_rapid_ = nh_.serviceClient<abb_rapid_sm_addin_msgs::SetRAPIDRoutine>(RWSConstants::Services::SET_RAPID_ROUTINE);
+    sc_run_rapid_ = nh_.serviceClient<abb_robot_msgs::TriggerWithResultCode>(RWSConstants::Services::RUN_RAPID_ROUTINE);
+
+    as_exec_rapid_.registerGoalCallback(boost::bind(&RWSWrapper::goalCBExecuteRapid, this));
+
+    sub_rwsstate_ = nh_.subscribe(RWSConstants::Topics::SM_RUNTIME_STATES, 1,&RWSWrapper::subCBRapidState,this);
+
+    as_exec_rapid_.start();
 }
 
 RWSWrapper::~RWSWrapper() {}
