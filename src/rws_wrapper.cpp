@@ -44,8 +44,8 @@ void RWSWrapper::goalCBExecuteRapid()
 {
     if (!robtask_.is_running)
     {
+        //ros::Duration(0.5).sleep();
         auto goal = as_exec_rapid_.acceptNewGoal();
-        ros::Duration(0.5).sleep();
         if(executeRapid(goal->routine))
             robtask_.is_running = true;
         else
@@ -60,13 +60,20 @@ void RWSWrapper::subCBRapidState(const abb_rapid_sm_addin_msgs::RuntimeState::Co
     if (!as_exec_rapid_.isActive())
         return;
     
-    if(msg->state_machines[robtask_.topic_id].sm_state == RWSConstants::SM_STATE_IDLE)
+    for (auto state : msg->state_machines)
     {
-        robtask_.is_running = false;
-        result_exec_rapid_.result_code = RWSConstants::RC_SUCCESS;
-        as_exec_rapid_.setSucceeded(result_exec_rapid_);
-        ROS_DEBUG_NAMED("RWS", "task %s is now IDLE", robtask_.name.c_str());
+        if (state.rapid_task == robtask_.name && state.sm_state == RWSConstants::SM_STATE_IDLE)
+        {
+            robtask_.is_running = false;
+            result_exec_rapid_.result_code = RWSConstants::RC_SUCCESS;
+            as_exec_rapid_.setSucceeded(result_exec_rapid_);
+            ROS_DEBUG_NAMED("RWS", "task %s is now IDLE", robtask_.name.c_str());
+        }
     }
+    // if(msg->state_machines[robtask_.topic_id].sm_state == RWSConstants::SM_STATE_IDLE)
+    // {
+
+    // }
 }
 
 RWSWrapper::RWSWrapper(RWSConstants::RobTask task) :
