@@ -27,9 +27,9 @@
       <arg name="robot_nickname" value="$(arg robot_nickname)"/>
     </include>
 
-    <node name="yumi_bringup" pkg="yumi_bringup" type="yumi_bringup" respawn="false" output="screen"/>
+    <node name="rws_bringup" pkg="yumi_bringup" type="rws_bringup" respawn="false" output="screen"/>
 
-    <node name="exec_traj" pkg="yumi_bringup" type="exec_traj" respawn="false" output="screen"/>
+    <node name="followjoint_bringup" pkg="yumi_bringup" type="followjoint_bringup" respawn="false" output="screen"/>
 
   </group>
 

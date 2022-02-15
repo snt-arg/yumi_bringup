@@ -140,8 +140,8 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
- add_executable(yumi_bringup src/bringup.cpp)
- add_executable(exec_traj src/exec_traj.cpp)
+ add_executable(rws_bringup src/rws_bringup.cpp)
+ add_executable(followjoint_bringup src/followjoint_bringup.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -156,8 +156,8 @@ include_directories(
 ## Specify libraries to link a library or executable target against
  target_link_libraries(RWS_WRAPPER ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
- target_link_libraries(yumi_bringup ${catkin_LIBRARIES} ${Boost_LIBRARIES} RWS_WRAPPER)
- target_link_libraries(exec_traj ${catkin_LIBRARIES} ${Boost_LIBRARIES} RWS_WRAPPER)
+ target_link_libraries(rws_bringup ${catkin_LIBRARIES} ${Boost_LIBRARIES} RWS_WRAPPER)
+ target_link_libraries(followjoint_bringup ${catkin_LIBRARIES} ${Boost_LIBRARIES} RWS_WRAPPER)
 
 #############
 ## Install ##
