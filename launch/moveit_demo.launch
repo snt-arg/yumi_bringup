@@ -12,7 +12,7 @@
 
   <remap from="joint_states" to="/$(arg robot_nickname)/rws/joint_states"/>
 
-  <include file="$(find myyumi_moveit_config)/launch/demo_online.launch">
+  <include file="$(find yumi_moveit_config)/launch/demo_online.launch">
   </include>
 
 </launch>  
