@@ -3,10 +3,10 @@
 
 int main(int argc, char **argv)
 {
-    if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug))
-    {
-        ros::console::notifyLoggerLevelsChanged();
-    }
+    // if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug))
+    // {
+    //     ros::console::notifyLoggerLevelsChanged();
+    // }
     ros::init(argc, argv, "yumi_bringup");
     ros::NodeHandle nh;
 
