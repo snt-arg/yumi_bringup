@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="robot_ip" default="192.168.229.1" doc="The robot controller's IP address"/>
+
+  <!-- Using an nickname/identifier for the robot controller is good practice -->
+  <arg name="robot_nickname" default="yumi" doc="Nickname/identifier for the robot controller"/>
+
+  <!-- Enable DEBUG output for all ABB nodes -->
+  <arg name="debug" default="false"/>
+  <env if="$(arg debug)" name="ROSCONSOLE_CONFIG_FILE" value="$(find abb_robot_bringup_examples)/config/rosconsole.conf"/>
+
+  <include file="$(find yumi_bringup)/launch/rws_bringup.launch">
+    <arg name="robot_ip" value="$(arg robot_ip)"/>
+    <arg name="robot_nickname" value="$(arg robot_nickname)"/>
+  </include>
+
+  <include file="$(find yumi_bringup)/launch/egm_bringup.launch.xml">
+    <arg name="robot_ip" value="$(arg robot_ip)"/>
+    <arg name="robot_nickname" value="$(arg robot_nickname)"/>
+  </include>
+</launch>

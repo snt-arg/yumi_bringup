@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="robot_ip" value="192.168.229.1" doc="The robot controller's IP address"/>
+  <!-- Using an nickname/identifier for the robot controller is good practice -->
+  <arg name="robot_nickname" default="yumi" doc="Nickname/identifier for the robot controller"/>
+  <arg name="debug" default="false"/>
+  <arg name="use_rviz" default="true" />
+
+
+  <include file="$(find yumi_bringup)/launch/moveit.launch">
+    <arg name="robot_nickname" value="$(arg robot_nickname)"/>
+    <arg name="use_rviz" value="$(arg use_rviz)"/>
+  </include>
+
+
+  <include file="$(find yumi_bringup)/launch/rws_egm_bringup.launch">
+    <arg name="robot_ip" value="$(arg robot_ip)"/>
+    <arg name="robot_nickname" value="$(arg robot_nickname)"/>
+  </include>
+</launch>
