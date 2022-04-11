@@ -16,7 +16,7 @@
     <!-- =========================================================================================================== -->
 
     <!-- RWS state publisher (i.e. general states about the robot controller) -->
-    <include file="$(find abb_rws_state_publisher)/launch/rws_state_publisher.launch">
+    <include file="$(find yumi_bringup)/launch/rws_state_publisher.launch">
       <arg name="robot_ip" value="$(arg robot_ip)"/>
       <arg name="robot_nickname" value="$(arg robot_nickname)"/>
     </include>

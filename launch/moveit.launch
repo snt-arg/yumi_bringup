@@ -4,7 +4,7 @@
   <arg name="robot_nickname" default="yumi"/>
   <arg name="use_rviz" default="true" />
 
-  <remap from="joint_states" to="/$(arg robot_nickname)/rws/joint_states"/>
+  <!-- <remap from="joint_states" to="/$(arg robot_nickname)/rws/joint_states"/> -->
 
   <include file="$(find yumi_moveit_config)/launch/demo_online.launch">
     <arg name="use_rviz" value="$(arg use_rviz)"/>
