@@ -7,13 +7,16 @@ class RWSRoutine():
 
 class EGMRoutine():
 
-    def __init__(self, name, duration=None):
+    def __init__(self, name, duration=0.0):
         self.name = name
         self.duration = duration
 
 
-config = [RWSRoutine("dadayeh0"),
-          RWSRoutine("dadayeh1")]
+test_config = [EGMRoutine("testdemo"),
+          RWSRoutine("rwstest0"),
+          RWSRoutine("rwstest1")]
 
-config = [EGMRoutine("testdemo")]
+egm_only_config = [EGMRoutine("testdemo", 20)]
+
+config = egm_only_config
     
