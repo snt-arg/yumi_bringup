@@ -1,4 +1,4 @@
-task: 'T_ROB_R'
+task: 'T_ROB_L'
 settings:
   allow_egm_motions: true
   use_presync: false
@@ -93,6 +93,6 @@ settings:
         q2: 0.0
         q3: 0.0
         q4: 0.0
-    pos_corr_gain: 1.0
+    pos_corr_gain: 5.0
   stop:
     ramp_out_time: 1.0
