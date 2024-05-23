@@ -17,4 +17,5 @@
     <arg name="robot_ip" value="$(arg robot_ip)"/>
     <arg name="robot_nickname" value="$(arg robot_nickname)"/>
   </include>
+<node name="joint_buffer" pkg="yumi_bringup" type="joint_buffer.py" output="screen" />
 </launch>
