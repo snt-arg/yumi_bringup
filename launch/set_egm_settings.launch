@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="egm_config" value="$(find yumi_bringup)/config/egm_settings.yaml"/>
+  <arg name="egm_config" value="$(find yumi_bringup)/config/egm_settings_l.yaml"/>
 
   <node pkg="yumi_bringup" type="egm_settings.py" name="egm_settings" output="screen">
     <param name="egm_config" value="$(arg egm_config)"/>
